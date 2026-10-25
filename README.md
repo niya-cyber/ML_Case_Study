@@ -1,175 +1,111 @@
 # Telco Customer Churn Prediction
 
-## Project Overview
+## 1. Project Overview
 
-This project uses machine learning to predict customer churn in a telecommunications company. The objective is to analyze customer data, identify patterns associated with churn, and compare different machine learning models.
+Customer churn occurs when a customer stops using a company's services. Predicting churn helps telecommunications companies identify customers who may leave and develop suitable customer-retention strategies.
 
-## Dataset
+The objective of this project is to build and evaluate machine learning models that predict whether a telecommunications customer will churn.
+
+## 2. Dataset
 
 - **Dataset:** Telco Customer Churn
-- **Total Customers:** 7,043
-- **Original Columns:** 21
-- **Features Used:** 19
-- **Target Variable:** `Churn`
+- **File:** `WA_Fn-UseC_-Telco-Customer-Churn.csv`
+- **Number of records:** 7,043
+- **Original number of columns:** 21
+- **Target variable:** `Churn`
 
 The target variable is encoded as:
-- `0` — Customer stayed
-- `1` — Customer churned
+- `No = 0`
+- `Yes = 1`
 
-## Project Workflow
+The `customerID` column is removed because it is an identifier rather than a meaningful predictive feature. The `TotalCharges` column is converted to numeric format, and missing values are handled during data cleaning.
 
-1. Data loading and initial exploration
-2. Data cleaning and preprocessing
-3. Exploratory Data Analysis (EDA)
-4. Train-test split
-5. Feature preprocessing
-6. Model training
-7. Model evaluation and comparison
-8. ROC curve analysis
-9. Conclusion
+## 3. Machine Learning Models
 
-## Data Cleaning and Preprocessing
+Four classification algorithms are used:
 
-The following preprocessing steps were performed:
+1. **Logistic Regression** — A linear classification algorithm used to predict the probability of customer churn.
+2. **Decision Tree** — A model that learns decision rules from customer data.
+3. **Random Forest** — An ensemble model that combines multiple decision trees.
+4. **XGBoost** — A gradient-boosting algorithm that builds decision trees sequentially to improve predictions.
 
-- Removed `customerID` because it is an identifier rather than a useful predictive feature.
-- Converted `TotalCharges` from text to numeric.
-- Identified 11 missing `TotalCharges` values associated with customers whose tenure was zero and replaced them with `0`.
-- Encoded the target variable as `No = 0` and `Yes = 1`.
-- Retained all 7,043 customer records.
-- Split the dataset into training and testing sets using an 80:20 ratio.
-- Used stratified sampling to preserve the churn distribution.
+Class weighting is used to address the imbalance between customers who churn and those who remain.
 
-### Train-Test Split
+## 4. Project Workflow
 
-- **Training Records:** 5,634
-- **Testing Records:** 1,409
-- **Random State:** 42
+The project follows these steps:
 
-## Exploratory Data Analysis
+1. Import the required Python libraries.
+2. Load and inspect the dataset.
+3. Examine missing values, duplicates, and the churn distribution.
+4. Clean the data and encode the target variable.
+5. Perform Exploratory Data Analysis (EDA).
+6. Split the dataset into training and testing sets.
+7. Preprocess numerical and categorical features.
+8. Train the four machine learning models.
+9. Evaluate and compare model performance.
+10. Visualise evaluation metrics using charts.
+11. Analyse confusion matrices and ROC curves.
+12. Investigate feature importance using Random Forest permutation importance.
+13. Summarise the results and limitations.
 
-### 1. Churn Rate by Contract Type
+## 5. Exploratory Data Analysis
 
-| Contract Type | Churn Rate |
-|---|---:|
-| Month-to-month | 42.71% |
-| One year | 11.27% |
-| Two year | 2.83% |
+EDA is used to understand the dataset and investigate relationships between customer characteristics and churn.
 
-Customers with month-to-month contracts had a substantially higher churn rate than customers with longer-term contracts.
+The analysis includes:
+- Customer churn distribution.
+- Churn rate by contract type.
+- Customer tenure by churn status.
+- Monthly charges by churn status.
 
-### 2. Average Tenure by Churn Status
+These visualisations help identify patterns associated with customer churn. However, observed relationships do not necessarily establish causation.
 
-| Churn Status | Average Tenure |
-|---|---:|
-| Stayed | 37.57 months |
-| Churned | 17.98 months |
+## 6. Data Preprocessing
 
-Customers who churned had a shorter average tenure than customers who stayed.
+The following preprocessing techniques are applied:
 
-### 3. Average Monthly Charges by Churn Status
+- **Missing-value handling:** Missing numerical values are imputed using the median, while missing categorical values are imputed using the most frequent category.
+- **Feature scaling:** `StandardScaler` standardises numerical features.
+- **One-Hot Encoding:** Converts categorical variables into numerical representations.
+- **Train-test split:** The dataset is divided into 80% training data and 20% testing data.
+- **Stratification:** Maintains approximately the same churn-class proportions in both sets.
 
-| Churn Status | Average Monthly Charges |
-|---|---:|
-| Stayed | 61.27 |
-| Churned | 74.44 |
+Preprocessing is incorporated into machine learning pipelines to ensure that transformations are fitted using the training data.
 
-Customers who churned had higher average monthly charges than customers who stayed.
+## 7. Model Evaluation
 
-These findings show associations in the dataset and do not establish causation.
+The models are evaluated using the following metrics:
 
-## Feature Preprocessing
+| Metric | Description |
+|---|---|
+| Accuracy | Proportion of predictions that are correct |
+| Precision | Proportion of predicted churners who actually churn |
+| Recall | Proportion of actual churners correctly identified |
+| F1-score | Harmonic mean of precision and recall |
+| ROC-AUC | Measures how well the model distinguishes churners from non-churners across classification thresholds |
 
-The dataset contains numerical and categorical features.
+Confusion matrices and ROC curves are also used to compare the models.
 
-### Numerical Features
-- `SeniorCitizen`
-- `tenure`
-- `MonthlyCharges`
-- `TotalCharges`
+Since the dataset is imbalanced, accuracy is not considered the only measure of model performance.
 
-Numerical features were processed using median imputation and standardization.
+## 8. Feature Importance
 
-### Categorical Features
+Random Forest permutation importance is used to investigate which features contribute most to predictive performance.
 
-Categorical features were processed using most-frequent-value imputation and one-hot encoding.
+Permutation importance measures how much a model's performance changes when a feature's values are shuffled.
 
-The preprocessing steps were incorporated into scikit-learn pipelines to help prevent data leakage from the test set.
+Features with larger positive importance scores generally provide more useful predictive information to the fitted model.
 
-## Machine Learning Models
+Feature importance indicates predictive usefulness, not proof of causation.
 
-Four classification algorithms were implemented:
-
-1. Logistic Regression
-2. Decision Tree
-3. Random Forest
-4. XGBoost
-
-All models were evaluated using the same train-test split.
-
-## Model Evaluation
-
-The models were evaluated using the following metrics:
-
-- **Accuracy:** Proportion of all predictions that were correct.
-- **Precision:** Proportion of predicted churners who actually churned.
-- **Recall:** Proportion of actual churners correctly identified.
-- **F1-score:** Harmonic mean of precision and recall.
-- **ROC-AUC:** Measures the model's ability to distinguish between customers who churn and customers who stay.
-
-## Model Comparison Results
-
-| Model | Accuracy | Precision | Recall | F1-score | ROC-AUC |
-|---|---:|---:|---:|---:|---:|
-| Logistic Regression | 80.55% | 65.72% | 55.88% | 60.40% | 84.21% |
-| Decision Tree | 72.11% | 47.55% | 49.20% | 48.36% | 64.77% |
-| Random Forest | 78.64% | 62.54% | 48.66% | 54.74% | 81.85% |
-| XGBoost | 80.34% | 66.33% | 52.67% | 58.72% | 84.45% |
-
-## Results Analysis
-
-- **Logistic Regression** achieved the highest accuracy, recall, and F1-score.
-- **XGBoost** achieved the highest precision and ROC-AUC.
-- **Random Forest** performed better than the single Decision Tree across all five evaluation metrics.
-- **Decision Tree** recorded the lowest ROC-AUC among the four models.
-
-Logistic Regression and XGBoost were the strongest models in this baseline comparison, with different strengths.
-
-The results are based on a single stratified train-test split. They do not establish that one model will always perform best on other datasets.
-
-## Conclusion
-
-This project demonstrated a machine learning workflow for customer churn prediction, including data cleaning, exploratory analysis, feature preprocessing, model training, and evaluation.
-
-The exploratory analysis identified relationships between churn and contract type, customer tenure, and monthly charges.
-
-Logistic Regression achieved the highest accuracy, recall, and F1-score, while XGBoost achieved the highest precision and ROC-AUC. The most appropriate model depends on the business objective and the trade-off between missing potential churners and incorrectly flagging customers who would stay.
-
-## Future Improvements
-
-Possible future improvements include:
-
-- Hyperparameter tuning
-- Classification threshold optimization
-- Cross-validation
-- Further analysis of factors associated with churn
-- Evaluation of potential business costs associated with false positives and false negatives
-
-## Tools and Technologies
+## 9. Technologies Used
 
 - Python
-- pandas
+- Pandas
 - NumPy
 - Matplotlib
 - Seaborn
-- scikit-learn
+- Scikit-learn
 - XGBoost
 - Jupyter Notebook
-
-## Project Structure
-
-```text
-ML_Case_Study/
-├── WA_Fn-UseC_-Telco-Customer-Churn.csv
-├── Telco_Customer_Churn.ipynb
-└── README.md
